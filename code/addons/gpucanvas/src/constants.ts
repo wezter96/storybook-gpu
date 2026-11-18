@@ -18,10 +18,12 @@ export const EVENTS = {
 
 export type CanvasRequest = {
   id: string;
-  kind: 'describe' | 'capture' | 'stats';
+  kind: 'describe' | 'capture' | 'stats' | 'flow';
   /** A node id from `describe()`, for a capture. Falls back to the whole story. */
   target?: string;
   scale?: number;
+  /** For `flow`: open the map, or close it. */
+  open?: boolean;
 };
 
 export type CanvasResponse =
@@ -33,6 +35,7 @@ export const ROOT_ID = 'storybook-root';
 /** The element the canvas moves the story root into, and registers as a node. */
 export const NODE_ID = 'gpucanvas-node';
 export const HOST_ID = 'gpucanvas-host';
+export const FLOW_HOST_ID = 'gpucanvas-flow-host';
 
 export const BACKGROUND = '#f6f7f9';
 

@@ -95,7 +95,10 @@ export const GpuCanvasPanel = () => {
     [emit]
   );
 
-  const report = async (request: Omit<CanvasRequest, 'id'>, describe: (data: unknown) => string) => {
+  const report = async (
+    request: Omit<CanvasRequest, 'id'>,
+    describe: (data: unknown) => string
+  ) => {
     setBusy(true);
     try {
       const response = await call(request);
@@ -126,9 +129,7 @@ export const GpuCanvasPanel = () => {
           type="button"
           disabled={!enabled || busy}
           style={{ ...controlStyle, opacity: !enabled || busy ? 0.5 : 1 }}
-          onClick={() =>
-            report({ kind: 'stats' }, (data) => JSON.stringify(data, null, 2))
-          }
+          onClick={() => report({ kind: 'stats' }, (data) => JSON.stringify(data, null, 2))}
         >
           Renderer stats
         </button>

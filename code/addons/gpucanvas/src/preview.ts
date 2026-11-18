@@ -2,6 +2,8 @@ import { addons } from 'storybook/preview-api';
 
 import type { AgentView, Effect, GpuCanvas, Marks, Rect } from 'gpucanvas';
 
+import { createFlow, type Flow, type FlowOptions } from './flow.ts';
+
 import {
   AGENT_GLOBAL,
   BACKGROUND,
@@ -9,6 +11,7 @@ import {
   EFFECT_GLOBAL_KEY,
   EFFECT_NAMES,
   EVENTS,
+  FLOW_HOST_ID,
   GLOBAL_KEY,
   HOST_ID,
   NODE_ID,
@@ -37,7 +40,14 @@ type AgentApi = {
   note: (elementId: string, text: string) => void;
   connect: (fromId: string, toId: string, label?: string) => void;
   clearMarks: () => void;
+  /** The flow map: every story as a card, panned and zoomed like an infinite canvas. */
+  openFlow: (options?: FlowOptions) => Promise<unknown>;
+  closeFlow: () => void;
+  flowStats: () => unknown;
+  focusStory: (id?: string) => void;
 };
+
+type FlowState = { view: Flow; canvas: GpuCanvas; marks: Marks; host: HTMLElement };
 
 let state: CanvasState = { ...DEFAULT_STATE };
 let canvas: GpuCanvas | undefined;
@@ -49,6 +59,8 @@ let treeObserver: MutationObserver | undefined;
 let resizeObserver: ResizeObserver | undefined;
 let lastWidth = 0;
 let lastHeight = 0;
+/** The flow map owns its own canvas, so it can stay open while the story canvas is on or off. */
+let flowState: FlowState | undefined;
 /** Guards a mount that is still awaiting the canvas against a toggle that turned it off. */
 let mountToken = 0;
 /**
@@ -203,7 +215,55 @@ function createAgentApi(): AgentApi {
       }
     },
     clearMarks: () => marks?.clear(),
+    openFlow: (options) => openFlow(options),
+    closeFlow: () => closeFlow(),
+    flowStats: () => flowState?.view.stats() ?? null,
+    focusStory: (id) => flowState?.view.focus(id),
   };
+}
+
+/**
+ * The flow map is a second canvas over the whole preview: every story in the index laid out as a
+ * card one screen wide, so a project of thousands of stories is one surface you pan around.
+ */
+async function openFlow(options?: FlowOptions): Promise<unknown> {
+  if (flowState) {
+    flowState.view.sync();
+    return flowState.view.stats();
+  }
+
+  const module = await lib();
+  const hostElement = document.createElement('div');
+  hostElement.id = FLOW_HOST_ID;
+  hostElement.style.cssText = `position:fixed;inset:0;z-index:2;background:${BACKGROUND};`;
+  document.body.appendChild(hostElement);
+
+  const created = await module.createGpuCanvas(hostElement, {
+    mode: 'auto',
+    background: BACKGROUND,
+    // Panning is what drives which stories are mounted, so the map follows the camera directly.
+    onCameraChange: () => flowState?.view.sync(),
+  });
+  const flowMarks = module.createMarks(created);
+  const view = await createFlow(created, flowMarks, options);
+
+  flowState = { view, canvas: created, marks: flowMarks, host: hostElement };
+  view.focus();
+
+  return view.stats();
+}
+
+function closeFlow(): void {
+  const current = flowState;
+  if (!current) {
+    return;
+  }
+
+  flowState = undefined;
+  current.view.destroy();
+  current.marks.destroy();
+  current.canvas.destroy();
+  current.host.remove();
 }
 
 function exposeAgentApi(): void {
@@ -424,9 +484,14 @@ async function answer(request: CanvasRequest): Promise<unknown> {
     case 'describe':
       return api.describe();
     case 'capture':
-      return await api.capture(request.target, request.scale ? { scale: request.scale } : undefined);
+      return await api.capture(
+        request.target,
+        request.scale ? { scale: request.scale } : undefined
+      );
     case 'stats':
       return { mode: api.mode, supportsGpu: api.supportsGpu, stats: api.stats() };
+    case 'flow':
+      return request.open === false ? (closeFlow(), null) : await api.openFlow();
     default: {
       const exhaustive: never = request.kind;
       throw new Error(`Unknown request: ${String(exhaustive)}`);

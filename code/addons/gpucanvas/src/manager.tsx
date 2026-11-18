@@ -6,9 +6,11 @@ import {
   ADDON_ID,
   EFFECT_GLOBAL_KEY,
   EFFECT_NAMES,
+  EVENTS,
   GLOBAL_KEY,
   PANEL_ID,
   TOOL_ID,
+  type CanvasRequest,
   type EffectName,
 } from './constants.ts';
 import { GpuCanvasPanel } from './panel.tsx';
@@ -75,7 +77,45 @@ const GpuCanvasTool = () => {
   );
 };
 
+/**
+ * Opens the flow map: every story in the index as a card on one canvas, connected in reading order.
+ * The map lives in the preview, so the manager only asks for it over the channel.
+ */
+const FlowTool = () => {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <div style={{ padding: '0 6px' }}>
+      <button
+        type="button"
+        title={open ? 'Close the story flow map' : 'Every story as one flow map'}
+        aria-pressed={open}
+        onClick={() => {
+          const next = !open;
+          setOpen(next);
+          const request: CanvasRequest = {
+            id: `flow-${Date.now()}`,
+            kind: 'flow',
+            open: next,
+          };
+          addons.getChannel().emit(EVENTS.REQUEST, request);
+        }}
+        style={buttonStyle}
+      >
+        Flow
+      </button>
+    </div>
+  );
+};
+
 addons.register(ADDON_ID, () => {
+  addons.add(`${ADDON_ID}/flow`, {
+    title: 'Story flow map',
+    type: types.TOOL,
+    match: ({ viewMode }) => viewMode === 'story',
+    render: FlowTool,
+  });
+
   addons.add(TOOL_ID, {
     title: 'GPU canvas',
     type: types.TOOL,

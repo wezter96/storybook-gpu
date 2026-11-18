@@ -66,3 +66,22 @@ toolsets currently lack — `stories.preview` hands a URL to a human instead.
 - **Snapshots are GPU-only**, so `capture()` throws on the DOM fallback (Firefox, Safari, iOS).
 - The story is moved out of its usual position in the preview document. Stories that depend on
   where they sit in the body (fixed overlays, `position: sticky`) can look different.
+
+## Flow map
+
+`Flow` in the toolbar (or `__STORYBOOK_GPUCANVAS__.openFlow()`) puts every story in the index on one
+canvas: each story is a card one viewport in size, laid out one column per component, with connector
+arrows in reading order. It is meant for projects with hundreds or thousands of stories, where seeing
+them side by side beats clicking through the sidebar.
+
+Only the stories near the viewport are mounted as real DOM; everything else is a cheap placeholder
+until it comes into view, and leaving the view unmounts them again. The canvas pages and snapshots the
+rest on the GPU, so panning a map of thousands of cards costs the same as a map of ten.
+
+```js
+const flow = window.__STORYBOOK_GPUCANVAS__;
+await flow.openFlow({ maxLive: 24 }); // 16 live stories by default
+flow.flowStats();                     // stories, live, placeholders, edges, canvas stats
+flow.focusStory('button--primary');   // frame one card
+flow.closeFlow();
+```
