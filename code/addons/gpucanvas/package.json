@@ -1,0 +1,69 @@
+{
+  "name": "@storybook/addon-gpucanvas",
+  "version": "11.0.0-beta.3",
+  "description": "Put stories on a gpucanvas infinite canvas, and let agents read and point at them",
+  "keywords": [
+    "storybook-addon",
+    "gpucanvas",
+    "webgpu",
+    "canvas",
+    "ai",
+    "agents"
+  ],
+  "homepage": "https://github.com/storybookjs/storybook/tree/next/code/addons/gpucanvas",
+  "bugs": {
+    "url": "https://github.com/storybookjs/storybook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/storybookjs/storybook.git",
+    "directory": "code/addons/gpucanvas"
+  },
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/storybook"
+  },
+  "license": "MIT",
+  "sideEffects": [
+    "./dist/index.js",
+    "./dist/preview.js",
+    "./dist/_browser-chunks/*.js"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "code": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./manager": "./dist/manager.js",
+    "./package.json": "./package.json",
+    "./preset": "./dist/preset.js",
+    "./preview": "./dist/preview.js"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "*.js",
+    "*.d.ts",
+    "!src/**/*"
+  ],
+  "dependencies": {
+    "gpucanvas": "^0.4.4"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "storybook": "workspace:^"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "storybook": {
+    "displayName": "GPU Canvas",
+    "unsupportedFrameworks": [
+      "react-native"
+    ]
+  }
+}

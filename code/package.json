@@ -52,6 +52,7 @@
     "@storybook/addon-a11y": "workspace:*",
     "@storybook/addon-designs": "^12.0.0",
     "@storybook/addon-docs": "workspace:*",
+    "@storybook/addon-gpucanvas": "workspace:*",
     "@storybook/addon-links": "workspace:*",
     "@storybook/addon-mcp": "workspace:*",
     "@storybook/addon-onboarding": "workspace:*",

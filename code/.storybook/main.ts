@@ -128,6 +128,7 @@ const config = defineMain({
     '@storybook/addon-vitest',
     '@storybook/addon-a11y',
     '@storybook/addon-mcp',
+    '@storybook/addon-gpucanvas',
     'storybook-addon-pseudo-states',
     '@chromatic-com/storybook',
     './services-preset.ts',
@@ -157,6 +158,11 @@ const config = defineMain({
   },
   core: {
     disableTelemetry: true,
+    // Proxied dev hosts (for example a cloud preview URL) must be listed explicitly. Opt in with a
+    // comma separated STORYBOOK_ALLOWED_HOSTS environment variable; unset it and nothing changes.
+    ...(process.env.STORYBOOK_ALLOWED_HOSTS
+      ? { allowedHosts: process.env.STORYBOOK_ALLOWED_HOSTS.split(',') }
+      : {}),
   },
   features: {
     developmentModeForBuild: true,

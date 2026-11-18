@@ -11,6 +11,8 @@ import addonA11y from '@storybook/addon-a11y';
 // TODO add empty preview
 // import * as designs from '@storybook/addon-designs/preview';
 import addonDocs from '@storybook/addon-docs';
+// The GPU canvas registers itself in the preview document, so it is imported for its side effect.
+import '@storybook/addon-gpucanvas';
 import { DocsContext } from '@storybook/addon-docs/blocks';
 import addonThemes from '@storybook/addon-themes';
 import addonTest from '@storybook/addon-vitest';

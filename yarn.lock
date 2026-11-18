@@ -9969,6 +9969,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@storybook/addon-gpucanvas@workspace:*, @storybook/addon-gpucanvas@workspace:code/addons/gpucanvas":
+  version: 0.0.0-use.local
+  resolution: "@storybook/addon-gpucanvas@workspace:code/addons/gpucanvas"
+  dependencies:
+    gpucanvas: "npm:^0.4.4"
+    typescript: "npm:^6.0.3"
+  peerDependencies:
+    storybook: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@storybook/addon-links@workspace:*, @storybook/addon-links@workspace:code/addons/links":
   version: 0.0.0-use.local
   resolution: "@storybook/addon-links@workspace:code/addons/links"
@@ -10328,6 +10339,7 @@ __metadata:
     "@storybook/addon-a11y": "workspace:*"
     "@storybook/addon-designs": "npm:^12.0.0"
     "@storybook/addon-docs": "workspace:*"
+    "@storybook/addon-gpucanvas": "workspace:*"
     "@storybook/addon-links": "workspace:*"
     "@storybook/addon-mcp": "workspace:*"
     "@storybook/addon-onboarding": "workspace:*"
@@ -22477,6 +22489,21 @@ __metadata:
   version: 1.2.0
   resolution: "gopd@npm:1.2.0"
   checksum: 10c0/50fff1e04ba2b7737c097358534eacadad1e68d24cccee3272e04e007bed008e68d2614f3987788428fd192a5ae3889d08fb2331417e4fc4a9ab366b2043cead
+  languageName: node
+  linkType: hard
+
+"gpucanvas@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "gpucanvas@npm:0.4.4"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/7e0438001a084499d4a4c7c962dfade2c5c122e04c028f5a493464664df1b3b187c7cc5d99223dd984173ad80b340a050d674a2612d9e026b4f99421b9855a34
   languageName: node
   linkType: hard
 
